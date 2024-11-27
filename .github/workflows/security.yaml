@@ -21,16 +21,12 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Read image_name from config.json
+      # Get values from config.json
       - name: Parse config.json
         run: |
           IMAGE_NAME=$(jq -r '.image_name' folder/config.json)
           echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_ENV
-
-      # Validate that IMAGE_NAME is correctly set (Optional)
-      - name: Verify IMAGE_NAME
-        run: echo "Image Name: $IMAGE_NAME"
-
+      
       # Set up Python for static code analysis
       - name: Set up Python
         uses: actions/setup-python@v3
