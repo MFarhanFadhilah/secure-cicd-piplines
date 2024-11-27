@@ -39,7 +39,7 @@ jobs:
         run: |
           docker pull snyk/snyk:python-3.11
           docker run --rm -e SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} -v $(pwd):/project -w /project snyk/snyk:python-3.11 snyk test --file=requirements.txt --token=$SNYK_TOKEN
-          docker run --rm -e SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} -v $(pwd):/project -w /project snyk/snyk:python-3.11 snyk fix --file=requirements.txt --token=$SNYK_TOKEN
+          docker run --rm -e SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} -v $(pwd):/project -w /project snyk/snyk:python-3.11 snyk fix --file=requirements.txt --dry-run --token=$SNYK_TOKEN
 
       # Step 6: Docker Build and Container Scan with Trivy
       - name: Docker Build and Container Scan with Trivy
