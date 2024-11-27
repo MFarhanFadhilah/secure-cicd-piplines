@@ -37,22 +37,17 @@ jobs:
       # Install Snyk CLI and Run Dependency Scan 
       - name: Dependency Scan with SYNK
         run: |
-          sudo apt-get update
-          sudo apt-get install -y npm
-          npm install boolean@latest
-          npm install -g snyk
-          snyk auth ${{ secrets.SNYK_TOKEN }}
-          snyk test
-          snyk fix
+          docker pull snyk/snyk:python-3.11
+          docker run --rm -e SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} snyk/snyk:python-3.11 auth
+          docker run --rm -e SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} -v $(pwd):/project snyk/snyk:python-3.11 test --file=requirements.txt
+          docker run --rm -e SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} -v $(pwd):/project snyk/snyk:python-3.11 fix --file=requirements.txt
 
       # Step 6: Docker Build and Container Scan with Trivy
       - name: Docker Build and Container Scan with Trivy
         run: |
+          docker pull aquasec/trivy:0.57.1
           docker build -t flask-app .
-          docker run -d -p 5001:5001 --env-file .env flask-app
-          curl -sSL https://github.com/aquasecurity/trivy/releases/download/v0.39.0/trivy_0.39.0_Linux-x86_64.tar.gz | tar -xz
-          sudo mv trivy /usr/local/bin
-          trivy image flask-app
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.57.1 flask-app
 
       # Step 7: Secrets Scanning with Gitleaks
       - name: Secrets Scanning with Gitleaks
