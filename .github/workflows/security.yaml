@@ -38,9 +38,8 @@ jobs:
       - name: Dependency Scan with Snyk
         run: |
           docker pull snyk/snyk:python-3.11
-          docker run --rm -e SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} snyk/snyk:python-3.11 snyk auth
-          docker run --rm -e SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} -v $(pwd):/project snyk/snyk:python-3.11 snyk test --file=requirements.txt
-          docker run --rm -e SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} -v $(pwd):/project snyk/snyk:python-3.11 snyk fix --file=requirements.txt
+          docker run --rm -e SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} -v $(pwd):/project snyk/snyk:python-3.11 snyk test --file=requirements.txt --token=$SNYK_TOKEN
+          docker run --rm -e SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} -v $(pwd):/project snyk/snyk:python-3.11 snyk fix --file=requirements.txt --token=$SNYK_TOKEN
 
 
       # Step 6: Docker Build and Container Scan with Trivy
