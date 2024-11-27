@@ -43,9 +43,9 @@ jobs:
       # Step 6: Docker Build and Container Scan with Trivy
       - name: Docker Build and Container Scan with Trivy
         run: |
-          docker pull aquasec/trivy:0.57.1
           docker build -t flask-app .
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.57.1 flask-app
+          docker pull aquasec/trivy:0.57.1
+          docker run --rm aquasec/trivy:0.57.1 image flask-app
 
       # Step 7: Secrets Scanning with Gitleaks
       - name: Secrets Scanning with Gitleaks
