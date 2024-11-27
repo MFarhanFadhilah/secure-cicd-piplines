@@ -63,6 +63,7 @@ jobs:
           docker info
 
           echo "Building the Docker image..."
+          echo "IMAGE_NAME is $IMAGE_NAME"
           docker build -t library/$IMAGE_NAME .
           docker images | grep "library/$IMAGE_NAME" || { echo "Image build failed"; exit 1; }
 
