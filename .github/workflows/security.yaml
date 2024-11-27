@@ -35,12 +35,13 @@ jobs:
           bandit -r app/
 
       # Install Snyk CLI and Run Dependency Scan 
-      - name: Dependency Scan with SYNK
+      - name: Dependency Scan with Snyk
         run: |
           docker pull snyk/snyk:python-3.11
-          docker run --rm -e SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} snyk/snyk:python-3.11 auth
-          docker run --rm -e SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} -v $(pwd):/project snyk/snyk:python-3.11 test --file=requirements.txt
-          docker run --rm -e SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} -v $(pwd):/project snyk/snyk:python-3.11 fix --file=requirements.txt
+          docker run --rm -e SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} snyk/snyk:python-3.11 snyk auth
+          docker run --rm -e SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} -v $(pwd):/project snyk/snyk:python-3.11 snyk test --file=requirements.txt
+          docker run --rm -e SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} -v $(pwd):/project snyk/snyk:python-3.11 snyk fix --file=requirements.txt
+
 
       # Step 6: Docker Build and Container Scan with Trivy
       - name: Docker Build and Container Scan with Trivy
