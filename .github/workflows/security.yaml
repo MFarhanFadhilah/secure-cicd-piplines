@@ -17,12 +17,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      # Check Docker info to confirm it's running
-      - name: Check Docker Info
-        run: docker info
-
-      # Docker login to Docker Hub
-      - name: Docker login
+      - name: Login Docker
         run: |
           echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
 
