@@ -13,61 +13,69 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the code
+      # Set up Docker Daemon to build or scan images
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+      
+      # Checkout the code
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Step 2: Set up Python for static code analysis
+      # Set up Python for static code analysis
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
           python-version: 3.8
 
-      # Step 3: Install dependencies
+      # Install dependencies
       - name: Install Dependencies
         run: |
           pip install -r requirements.txt
 
-      # Step 4: Static Code Analysis with Bandit
+      # Static Code Analysis with Bandit
       - name: Static Code Analysis with Bandit
         run: |
           pip install bandit
           bandit -r app/
 
-      # Dependency Scan with Snyk CLI (snyk fix can auto correct the dependency version but limited to enterprise account)
+      # Dependency Scan with Snyk CLI
+      # Note: if you use enterprise account, you can autocorrect dependency issues with synk fix which can be add after synk test command
       - name: Dependency Scan with Snyk
         run: |
           docker pull snyk/snyk:python-3.11
           docker run --rm -e SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} -v $(pwd):/project -w /project snyk/snyk:python-3.11 snyk test --file=requirements.txt --token=$SNYK_TOKEN
 
-      # Step 6: Docker Build and Container Scan with Trivy
+      # Container Scanning with Trivy
       - name: Docker Build and Container Scan with Trivy
         run: |
-          docker build -t flask-app .
+          docker build -t ${_IMAGE_NAME} .
           docker pull aquasec/trivy:0.57.1
-          docker run --rm aquasec/trivy:0.57.1 image flask-app
+          docker run --rm aquasec/trivy:0.57.1 image ${_IMAGE_NAME}
 
-      # Step 7: Secrets Scanning with Gitleaks
+      # Secrets Scanning with Gitleaks
       - name: Secrets Scanning with Gitleaks
         uses: zricethezav/gitleaks-action@v2
         with:
           args: --no-git --path=.
 
-      # Step 8: Run OWASP ZAP Scan (DAST)
+      # Run OWASP ZAP Scan (DAST)
       - name: Run OWASP ZAP Scan
         uses: zaproxy/action-full-scan@v0.7.0
         with:
           target: 'http://localhost:5001'
 
-      # Step 9: Secure Secrets Injection (from GitHub Secrets)
+      # Secure Secrets Injection
       - name: Inject Secrets Securely
         run: |
           echo ${{ secrets.SECRET_KEY }} > .env
           echo ${{ secrets.DATABASE_URL }} >> .env
 
-      # Step 10: Push Docker Image to Docker Hub
+      # Push Docker Image to Docker Hub
       - name: Push Docker Image to Docker Hub
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker tag flask-app ${{ secrets.DOCKER_USERNAME }}/flask-app:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/flask-app:latest
+          docker tag ${_IMAGE_NAME} ${{ secrets.DOCKER_USERNAME }}/${_IMAGE_NAME}:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/${_IMAGE_NAME}:latest
+    
+    substitutions:
+    _IMAGE_NAME: flask-app
