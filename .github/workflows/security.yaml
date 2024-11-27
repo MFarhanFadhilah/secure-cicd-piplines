@@ -34,7 +34,7 @@ jobs:
           pip install bandit
           bandit -r app/
 
-      # Install Snyk CLI and Run Dependency Scan
+      # Install Snyk CLI and Run Dependency Scan 
       - name: Dependency Scan with SYNK
         run: |
           sudo apt-get update
