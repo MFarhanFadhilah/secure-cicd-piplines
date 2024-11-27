@@ -36,7 +36,7 @@ jobs:
 
       # Step 5: Snyk Dependency Scan
       - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/python@v1.0.1
+        uses: snyk/actions/checkout@main
         with:
           snyk-token: ${{ secrets.SNYK_TOKEN }}
 
