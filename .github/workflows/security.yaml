@@ -38,14 +38,14 @@ jobs:
       # Debug step to check Snyk token validity
       - name: Check Snyk token
         run: |
-          echo "Snyk Token: ${{ secrets.SNYK_TOKEN }}"  # Ensure your SNYK_TOKEN is valid
+          echo "Snyk Token: ${{ secrets.SNYK_TOKEN }}"
 
       # Install Snyk CLI and Run Dependency Scan
       - name: Install Snyk CLI and Run Dependency Scan
         run: |
           curl -sL https://snyk.io/install.sh | bash
           snyk auth ${{ secrets.SNYK_TOKEN }}
-          snyk test || true  # This prevents failure if vulnerabilities are found
+          snyk test || true
 
       # Step 6: Docker Build and Container Scan with Trivy
       - name: Docker Build and Container Scan with Trivy
