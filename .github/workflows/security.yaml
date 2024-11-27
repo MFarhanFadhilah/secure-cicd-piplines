@@ -17,10 +17,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Login Docker
-        run: |
-          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-
       # Checkout the code
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -61,7 +57,9 @@ jobs:
       # Docker Build and Container Scan with Trivy
       - name: Docker Build and Container Scan with Trivy
         run: |
+          docker info
           docker build -t $IMAGE_NAME .
+          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
           docker pull aquasec/trivy:0.57.1
           docker run --rm aquasec/trivy:0.57.1 image $IMAGE_NAME
 
