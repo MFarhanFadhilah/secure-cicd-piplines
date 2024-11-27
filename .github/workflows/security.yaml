@@ -16,10 +16,20 @@ jobs:
       # Set up Docker Daemon to build or scan images
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
-      
+
       # Checkout the code
       - name: Checkout Code
         uses: actions/checkout@v3
+
+      # Read image_name from config.json
+      - name: Parse config.json
+        run: |
+          IMAGE_NAME=$(jq -r '.image_name' folder/config.json)
+          echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_ENV
+
+      # Validate that IMAGE_NAME is correctly set (Optional)
+      - name: Verify IMAGE_NAME
+        run: echo "Image Name: $IMAGE_NAME"
 
       # Set up Python for static code analysis
       - name: Set up Python
@@ -39,7 +49,6 @@ jobs:
           bandit -r app/
 
       # Dependency Scan with Snyk CLI
-      # Note: if you use enterprise account, you can autocorrect dependency issues with synk fix which can be add after synk test command
       - name: Dependency Scan with Snyk
         run: |
           docker pull snyk/snyk:python-3.11
@@ -48,9 +57,9 @@ jobs:
       # Container Scanning with Trivy
       - name: Docker Build and Container Scan with Trivy
         run: |
-          docker build -t ${_IMAGE_NAME} .
+          docker build -t $IMAGE_NAME .
           docker pull aquasec/trivy:0.57.1
-          docker run --rm aquasec/trivy:0.57.1 image ${_IMAGE_NAME}
+          docker run --rm aquasec/trivy:0.57.1 image $IMAGE_NAME
 
       # Secrets Scanning with Gitleaks
       - name: Secrets Scanning with Gitleaks
@@ -74,8 +83,5 @@ jobs:
       - name: Push Docker Image to Docker Hub
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker tag ${_IMAGE_NAME} ${{ secrets.DOCKER_USERNAME }}/${_IMAGE_NAME}:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/${_IMAGE_NAME}:latest
-    
-    substitutions:
-    _IMAGE_NAME: flask-app
+          docker tag $IMAGE_NAME ${{ secrets.DOCKER_USERNAME }}/$IMAGE_NAME:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/$IMAGE_NAME:latest
