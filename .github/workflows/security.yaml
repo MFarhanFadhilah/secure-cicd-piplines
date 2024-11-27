@@ -39,6 +39,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y npm
+          npm install boolean@latest
           npm install -g snyk
           snyk auth ${{ secrets.SNYK_TOKEN }}
           snyk test
