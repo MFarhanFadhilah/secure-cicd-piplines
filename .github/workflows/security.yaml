@@ -36,7 +36,7 @@ jobs:
 
       # Step 5: Snyk Dependency Scan
       - name: Snyk Dependency Scan
-        uses: snyk/actions/python@v2
+        uses: snyk/actions/python@v1
         with:
           command: test
 
