@@ -14,8 +14,20 @@ jobs:
 
     steps:
       # Set up Docker Daemon to build or scan images
-      - name: Set up Docker
+      - name: Set up Buildx
         uses: docker/setup-buildx-action@v2
+
+      - name: Set up Docker
+        uses: docker/setup-docker@v2
+        with:
+          version: 'latest'
+
+      - name: Check Docker version
+        run: docker --version
+
+      - name: Login Docker
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
       # Checkout the code
       - name: Checkout Code
@@ -78,6 +90,5 @@ jobs:
       # Push Docker Image to Docker Hub
       - name: Push Docker Image to Docker Hub
         run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker tag $IMAGE_NAME ${{ secrets.DOCKER_USERNAME }}/$IMAGE_NAME:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/$IMAGE_NAME:latest
