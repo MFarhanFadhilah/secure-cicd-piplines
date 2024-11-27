@@ -47,7 +47,7 @@ jobs:
       - name: Docker Build and Container Scan with Trivy
         run: |
           docker build -t flask-app .
-          docker run -d -p 5000:5000 --env-file .env flask-app
+          docker run -d -p 5001:5001 --env-file .env flask-app
           curl -sSL https://github.com/aquasecurity/trivy/releases/download/v0.39.0/trivy_0.39.0_Linux-x86_64.tar.gz | tar -xz
           sudo mv trivy /usr/local/bin
           trivy image flask-app
