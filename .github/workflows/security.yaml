@@ -13,21 +13,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Set up Docker Daemon to build or scan images
-      - name: Set up Buildx
+      # Set up Docker Buildx (required for building and scanning images)
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Set up Docker
-        uses: docker/setup-docker@v2
-        with:
-          version: 'latest'
-
+      # Verify Docker version
       - name: Check Docker version
         run: docker --version
 
-      - name: Login Docker
+      # Docker login to Docker Hub
+      - name: Docker login
         run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
 
       # Checkout the code
       - name: Checkout Code
@@ -38,7 +35,7 @@ jobs:
         run: |
           IMAGE_NAME=$(jq -r '.image_name' config.json)
           echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_ENV
-      
+
       # Set up Python for static code analysis
       - name: Set up Python
         uses: actions/setup-python@v3
@@ -62,7 +59,7 @@ jobs:
           docker pull snyk/snyk:python-3.11
           docker run --rm -e SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} -v $(pwd):/project -w /project snyk/snyk:python-3.11 snyk test --file=requirements.txt --token=$SNYK_TOKEN
 
-      # Container Scanning with Trivy
+      # Docker Build and Container Scan with Trivy
       - name: Docker Build and Container Scan with Trivy
         run: |
           docker build -t $IMAGE_NAME .
