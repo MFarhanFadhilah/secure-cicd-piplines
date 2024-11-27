@@ -24,7 +24,7 @@ jobs:
       # Get values from config.json
       - name: Parse config.json
         run: |
-          IMAGE_NAME=$(jq -r '.image_name' folder/config.json)
+          IMAGE_NAME=$(jq -r '.image_name' config.json)
           echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_ENV
       
       # Set up Python for static code analysis
