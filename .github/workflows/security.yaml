@@ -8,13 +8,14 @@ on:
     branches:
       - main
 
+  permissions:
+    contents: write # add permission for workflows to push changes to repo (i.e. uploading report)
+    actions: read # add permission for workflows to access actions
+    checks: write # add permission for ZAP Scan to modify check results
+    
 jobs:
   security-tests:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write # add permission for workflows to push changes to repo (i.e. uploading report)
-      actions: read # add permission for workflows to access actions
-      checks: write # add permission for ZAP Scan to modify check results
 
     steps:
       # Set up Docker Buildx (required for building and scanning images)
