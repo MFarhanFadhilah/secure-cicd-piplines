@@ -93,6 +93,12 @@ jobs:
             -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
             -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
             flask-app
+            
+      # Inspect the container status
+      - name: Debug Flask Container
+        run: |
+          docker ps -a
+          docker logs flask-app
 
       # Wait for Flask App to start
       - name: Wait for Flask App to Start
@@ -106,13 +112,7 @@ jobs:
             sleep 5
           done
           curl -s http://localhost:5001 || { echo "Flask app failed to start."; exit 1; }
-
-      # Inspect the container status
-      - name: Debug Flask Container
-        run: |
-          docker ps -a
-          docker logs flask-app
-
+      
       # Run OWASP ZAP Scan (DAST)
       - name: Run OWASP ZAP Scan
         uses: zaproxy/action-full-scan@v0.7.0

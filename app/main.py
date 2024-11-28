@@ -1,6 +1,7 @@
 from flask import Flask, Blueprint, jsonify, request
 
 app = Flask(__name__)
+app.debug = True
 
 main = Blueprint("main", __name__)
 
