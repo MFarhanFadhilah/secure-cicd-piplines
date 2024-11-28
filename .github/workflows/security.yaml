@@ -133,7 +133,7 @@ jobs:
           cp $REPORT_NAME index.html
           git add index.html
           git commit -m "Publish ZAP report: $REPORT_NAME (Run ID: $GITHUB_RUN_ID)"
-          git push https://${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/${{ github.repository }} gh-pages
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} gh-pages
 
       # Clean up Flask application container
       - name: Stop and Remove Flask App
