@@ -89,10 +89,10 @@ jobs:
       # Run Flask application container
       - name: Run Flask App
         run: |
-        docker run -d --name flask-app -p 5001:5001 \
-          -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
-          -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
-          flask-app
+          docker run -d --name flask-app -p 5001:5001 \
+            -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
+            -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
+            flask-app
 
       # Wait for Flask App to start
       - name: Wait for Flask App to Start
