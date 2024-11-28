@@ -11,6 +11,6 @@ RUN pip install -r requirements.txt
 COPY . .
 
 # Expose Flask's default port
-EXPOSE 5000
+EXPOSE 5001
 
 CMD ["python", "-m", "flask", "run", "--host=0.0.0.0"]
