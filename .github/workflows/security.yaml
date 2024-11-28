@@ -11,7 +11,7 @@ on:
 jobs:
   security-tests:
     runs-on: ubuntu-latest
-    permission:
+    permissions:
       contents: write # add permission for workflows to push changes to repo (i.e. uploading report)
       actions: read # add permission for workflows to access actions
       checks: write # add permission for ZAP Scan to modify check results
