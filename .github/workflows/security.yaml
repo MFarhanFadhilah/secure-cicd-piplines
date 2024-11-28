@@ -85,7 +85,7 @@ jobs:
         uses: zricethezav/gitleaks-action@v2
         with:
           args: --no-git --path=.
-
+                
       # Run Flask application container
       - name: Run Flask App
         run: |
@@ -94,6 +94,7 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
 
+      # Wait for Flask App to start
       - name: Wait for Flask App to start
         run: |
           for i in {1..10}; do
@@ -104,6 +105,7 @@ jobs:
             echo "Waiting for Flask app..."
             sleep 5
           done
+          curl -s http://localhost:5001 || { echo "Flask app failed to start."; exit 1; }
 
       # Run OWASP ZAP Scan (DAST)
       - name: Run OWASP ZAP Scan
@@ -111,6 +113,7 @@ jobs:
         with:
           target: 'http://localhost:5001'
 
+      # Clean up Flask application container
       - name: Stop and Remove Flask App
         if: always()
         run: |
