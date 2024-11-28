@@ -89,15 +89,15 @@ jobs:
       # Run Flask application container
       - name: Run Flask App
         run: |
-          docker run -d --name flask-app -p 5001:5001 flask-app
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        docker run -d --name flask-app -p 5001:5001 \
+          -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
+          -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
+          flask-app
 
       # Wait for Flask App to start
-      - name: Wait for Flask App to start
+      - name: Wait for Flask App to Start
         run: |
-          for i in {1..10}; do
+          for i in {1..20}; do  # Increased to 20 retries
             if curl -s http://localhost:5001 > /dev/null; then
               echo "Flask app is up and running."
               break
@@ -106,6 +106,12 @@ jobs:
             sleep 5
           done
           curl -s http://localhost:5001 || { echo "Flask app failed to start."; exit 1; }
+
+      # Inspect the container status
+      - name: Debug Flask Container
+        run: |
+          docker ps -a
+          docker logs flask-app
 
       # Run OWASP ZAP Scan (DAST)
       - name: Run OWASP ZAP Scan
