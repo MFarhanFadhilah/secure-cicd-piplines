@@ -1,5 +1,5 @@
 # Vulnerable base image
-FROM python:3.8-alpine
+FROM python:3.13.2-alpine
 
 WORKDIR /app
 
